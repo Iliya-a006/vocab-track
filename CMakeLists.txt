@@ -23,6 +23,7 @@ if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
     qt_add_executable(Vocabulary_app
         MANUAL_FINALIZATION
         ${PROJECT_SOURCES}
+        word.h word.cpp
     )
 # Define target properties for Android with Qt 6 as:
 #    set_property(TARGET Vocabulary_app APPEND PROPERTY QT_ANDROID_PACKAGE_SOURCE_DIR
