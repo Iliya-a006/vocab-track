@@ -3,6 +3,12 @@
 
 #include <QMainWindow>
 #include <qstackedwidget.h>
+#include "mainmenu.h"
+#include "todaypage.h"
+#include "addpage.h"
+#include "azlistpage.h"
+#include "dlistpage.h"
+#include "searchpage.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui {
@@ -12,7 +18,12 @@ QT_END_NAMESPACE
 
 
 enum pageEnum{
-    MAINMENU
+    MAINMENU,
+    TODAYLIST,
+    ADDPAGE,
+    AZLIST,
+    DLIST,
+    SEARCHPAGE
 };
 
 class MainWindow : public QMainWindow
@@ -30,5 +41,24 @@ private:
     Ui::MainWindow *ui;
 
     void paintEvent(QPaintEvent *event) override;
+    void loadPages();
+
+    std::unique_ptr<MainMenu> main_menu;
+    std::unique_ptr<TodayPage> today_page;
+    std::unique_ptr<AddPage> add_page;
+    std::unique_ptr<AZListPage> az_list;
+    std::unique_ptr<DListPage> dlist_page;
+    std::unique_ptr<SearchPage> search_page;
 };
 #endif // MAINWINDOW_H
+
+
+
+
+
+
+
+
+
+
+
