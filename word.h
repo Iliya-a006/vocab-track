@@ -12,6 +12,7 @@ public:
 
     static std::map<QString, std::unique_ptr<Word>> allWords;
     static void loadWords();
+    static void saveFile();
 
 private:
     QString term;

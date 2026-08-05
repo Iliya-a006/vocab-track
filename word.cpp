@@ -44,6 +44,43 @@ void Word::loadWords()
     }
 }
 
+void Word::saveFile()
+{
+    QJsonArray wordsArray;
+
+    for (const auto& [key, w] : allWords) {
+        QJsonObject wordObj;
+        wordObj["term"] = w->term;
+        wordObj["partOfSpeech"] = w->partOfSpeech;
+        wordObj["example"] = w->example;
+        wordObj["correctReviews"] = w->correctReviews;
+        wordObj["dateAdded"] = w->dateAdded.toString("yyyy/MM/dd");
+        wordObj["nextReviewDate"] = w->nextReviewDate.toString("yyyy/MM/dd");
+
+        QJsonArray synonymsArray;
+        for (const QString &syn : w->synonyms)
+            synonymsArray.append(syn);
+        wordObj["synonyms"] = synonymsArray;
+
+        QJsonArray translationsArray;
+        for (const QString &tra : w->translations)
+            translationsArray.append(tra);
+        wordObj["translations"] = translationsArray;
+
+        wordsArray.append(wordObj);
+    }
+
+    QJsonObject root;
+    root["words"] = wordsArray;
+    QJsonDocument doc(root);
+
+    QFile file("words.json");
+    if (!file.open(QIODevice::WriteOnly))
+        return;
+    file.write(doc.toJson());
+    file.close();
+}
+
 void Word::setCorrects(int c)
 {
     if (c < 1){c = 1;}
