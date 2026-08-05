@@ -1,4 +1,10 @@
 #include "word.h"
+#include <QFile>
+#include <QJsonDocument>
+#include <QJsonObject>
+#include <QJsonArray>
+#include <QJsonValue>
+#include <memory>
 
 Word::Word(QString t) : term(t)
 {
@@ -7,7 +13,36 @@ Word::Word(QString t) : term(t)
     correctReviews = 0;
 }
 
-QVector<Word> allWords;
+std::map<QString, std::unique_ptr<Word>> Word::allWords;
+void Word::loadWords()
+{
+    QFile file("words.json");
+    if (!file.open(QIODevice::ReadOnly))
+        return;
+    QByteArray data = file.readAll();
+    file.close();
+
+    QJsonDocument doc = QJsonDocument::fromJson(data);
+    QJsonObject root = doc.object();
+    QJsonArray wordsArray = root["words"].toArray();
+
+    for (const QJsonValue &val : wordsArray) {
+        QJsonObject wordObj = val.toObject();
+        std::unique_ptr<Word> w = std::make_unique<Word>(wordObj["term"].toString());
+
+        w->partOfSpeech = wordObj["partOfSpeech"].toString();
+        w->example = wordObj["example"].toString();
+        w->correctReviews = wordObj["correctReviews"].toInt();
+        w->dateAdded = QDate::fromString(wordObj["dateAdded"].toString(), "yyyy/MM/dd");
+        w->nextReviewDate = QDate::fromString(wordObj["nextReviewDate"].toString(), "yyyy/MM/dd");
+        for (auto syn : wordObj["synonyms"].toArray())
+            w->synonyms.push_back(syn.toString());
+        for (auto tra : wordObj["translations"].toArray())
+            w->translations.push_back(tra.toString());
+
+        allWords.insert({w->term, std::move(w)});
+    }
+}
 
 void Word::setCorrects(int c)
 {

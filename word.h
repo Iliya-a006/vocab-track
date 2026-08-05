@@ -3,13 +3,15 @@
 
 #include <qobject.h>
 #include <QDate>
+#include <map>
 
 class Word
 {
 public:
     Word(QString t);
 
-    static QVector<Word> allWords;
+    static std::map<QString, std::unique_ptr<Word>> allWords;
+    static void loadWords();
 
 private:
     QString term;
