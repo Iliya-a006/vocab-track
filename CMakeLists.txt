@@ -24,6 +24,9 @@ if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
         MANUAL_FINALIZATION
         ${PROJECT_SOURCES}
         word.h word.cpp
+        mainmenu.h mainmenu.cpp
+        page.h page.cpp
+        backgrounds.qrc
     )
 # Define target properties for Android with Qt 6 as:
 #    set_property(TARGET Vocabulary_app APPEND PROPERTY QT_ANDROID_PACKAGE_SOURCE_DIR
