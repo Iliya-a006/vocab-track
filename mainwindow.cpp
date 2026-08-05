@@ -18,8 +18,7 @@ MainWindow::MainWindow(QWidget *parent)
 
     Word::loadWords();
 
-    MainMenu* main_menu = new MainMenu(m_stack);
-    m_stack->addWidget(main_menu);
+    loadPages();
     changeStack(pageEnum::MAINMENU);
 }
 
@@ -44,6 +43,23 @@ void MainWindow::paintEvent(QPaintEvent *event)
         painter.drawPixmap(rect(), bg.scaled(size(), Qt::KeepAspectRatioByExpanding, Qt::SmoothTransformation));
     }
     QWidget::paintEvent(event);
+}
+
+void MainWindow::loadPages()
+{
+    main_menu = std::make_unique<MainMenu>();
+    today_page = std::make_unique<TodayPage>();
+    add_page = std::make_unique<AddPage>();
+    az_list = std::make_unique<AZListPage>();
+    dlist_page = std::make_unique<DListPage>();
+    search_page = std::make_unique<SearchPage>();
+
+    m_stack->addWidget(main_menu.get());
+    m_stack->addWidget(today_page.get());
+    m_stack->addWidget(add_page.get());
+    m_stack->addWidget(az_list.get());
+    m_stack->addWidget(dlist_page.get());
+    m_stack->addWidget(search_page.get());
 }
 
 MainWindow::~MainWindow()
