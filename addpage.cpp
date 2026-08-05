@@ -1,6 +1,7 @@
 #include "addpage.h"
 #include "mainwindow.h"
 #include "word.h"
+#include <map>
 
 AddPage::AddPage(QWidget *parent)
     : Page(parent)
@@ -25,7 +26,10 @@ AddPage::AddPage(QWidget *parent)
     });
     connect(saveButton, &QPushButton::clicked, this, [this](){
         if (!termEdit->text().length()){return;}
-        saveWord();
+        auto it = Word::allWords.find(termEdit->text());
+        if (it == Word::allWords.end())
+            saveWord();
+        this->refresh();
     });
 }
 
@@ -51,7 +55,7 @@ void AddPage::saveWord()
         w->addTranslation(t);
 
     Word::allWords.insert({w->getTerm(), std::move(w)});
-    this->refresh();
+    Word::saveFile();
 }
 
 void AddPage::layoutLoad()
