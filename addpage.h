@@ -49,6 +49,10 @@ private:
 
     void layoutLoad();
     void widgetsLoad();
+    void saveWord();
+
+    QVector<QString> synonyms;
+    QVector<QString> translations;
 };
 
 #endif // ADDPAGE_H

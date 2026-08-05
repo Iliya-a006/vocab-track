@@ -1,4 +1,6 @@
 #include "addpage.h"
+#include "mainwindow.h"
+#include "word.h"
 
 AddPage::AddPage(QWidget *parent)
     : Page(parent)
@@ -7,11 +9,49 @@ AddPage::AddPage(QWidget *parent)
 
     widgetsLoad();
     layoutLoad();
+
+    connect(backButton, &QPushButton::clicked, this, [](){
+        MainWindow::changeStack(pageEnum::MAINMENU);
+    });
+    connect(synonymSave, &QPushButton::clicked, this, [this](){
+        if (!synonymEdit->text().length()){return;}
+        synonyms.push_back(synonymEdit->text());
+        synonymEdit->setText("");
+    });
+    connect(translationSave, &QPushButton::clicked, this, [this](){
+        if (!translationEdit->text().length()){return;}
+        translations.push_back(translationEdit->text());
+        translationEdit->setText("");
+    });
+    connect(saveButton, &QPushButton::clicked, this, [this](){
+        if (!termEdit->text().length()){return;}
+        saveWord();
+    });
 }
 
 void AddPage::refresh()
 {
+    termEdit->setText("");
+    POSEdit->setCurrentIndex(-1);
+    exampleEdit->setText("");
+    synonymEdit->setText("");
+    translationEdit->setText("");
+    synonyms.clear();
+    translations.clear();
+}
 
+void AddPage::saveWord()
+{
+    std::unique_ptr<Word> w =  std::make_unique<Word>(termEdit->text());
+    w->setPOS(POSEdit->currentText());
+    w->setExample(exampleEdit->text());
+    for (auto s : synonyms)
+        w->addSynonym(s);
+    for (auto t : translations)
+        w->addTranslation(t);
+
+    Word::allWords.insert({w->getTerm(), std::move(w)});
+    this->refresh();
 }
 
 void AddPage::layoutLoad()
@@ -97,7 +137,6 @@ void AddPage::widgetsLoad()
     POSEdit->addItem("Verbe");
     POSEdit->addItem("Adjective");
     POSEdit->addItem("Adverbe");
-    POSEdit->setCurrentIndex(-1);
 
     backButton      = new QPushButton("Back", this);
     saveButton      = new QPushButton("Save", this);
