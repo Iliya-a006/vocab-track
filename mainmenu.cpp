@@ -7,7 +7,7 @@
 MainMenu::MainMenu(QWidget *parent)
     : Page(parent)
 {
-    this->background = ":/prefix1/images/Bg3";
+    this->background = ":/prefix1/images/Bg2";
 
     TRbutton = new QPushButton("Today's Review", this);
     ADDbutton = new QPushButton("Add New Word", this);
@@ -43,23 +43,17 @@ MainMenu::MainMenu(QWidget *parent)
 
 
     Vlayout = new QVBoxLayout();
-    Vlayout->addStretch();
-    Vlayout->addStretch();
-    Vlayout->addStretch();
-    Vlayout->addStretch();
+    Vlayout->addStretch(4);
     Vlayout->addWidget(TRbutton);
-    Vlayout->addStretch();
+    Vlayout->addStretch(1);
     Vlayout->addWidget(ADDbutton);
-    Vlayout->addStretch();
+    Vlayout->addStretch(1);
     Vlayout->addWidget(A_Zbutton);
-    Vlayout->addStretch();
+    Vlayout->addStretch(1);
     Vlayout->addWidget(LBDbutton);
-    Vlayout->addStretch();
+    Vlayout->addStretch(1);
     Vlayout->addWidget(SEARCHbutton);
-    Vlayout->addStretch();
-    Vlayout->addStretch();
-    Vlayout->addStretch();
-    Vlayout->addStretch();
+    Vlayout->addStretch(4);
 
     Hlayout = new QHBoxLayout();
     Hlayout->addStretch();
