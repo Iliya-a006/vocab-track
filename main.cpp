@@ -6,6 +6,7 @@
 int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);
+    Word::resetDailyReviewStatusIfNeeded();
     MainWindow w;
     QRect screenGeometry = QApplication::primaryScreen()->availableGeometry();
     w.setFixedSize(screenGeometry.size());

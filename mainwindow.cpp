@@ -53,6 +53,7 @@ void MainWindow::loadPages()
     az_list = std::make_unique<AZListPage>();
     dlist_page = std::make_unique<DListPage>();
     search_page = std::make_unique<SearchPage>();
+    word_page = std::make_unique<WordPage>();
 
     m_stack->addWidget(main_menu.get());
     m_stack->addWidget(today_page.get());
@@ -60,6 +61,7 @@ void MainWindow::loadPages()
     m_stack->addWidget(az_list.get());
     m_stack->addWidget(dlist_page.get());
     m_stack->addWidget(search_page.get());
+    m_stack->addWidget(word_page.get());
 }
 
 MainWindow::~MainWindow()
