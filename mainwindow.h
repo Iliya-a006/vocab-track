@@ -9,6 +9,7 @@
 #include "azlistpage.h"
 #include "dlistpage.h"
 #include "searchpage.h"
+#include "wordpage.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui {
@@ -23,7 +24,8 @@ enum pageEnum{
     ADDPAGE,
     AZLIST,
     DLIST,
-    SEARCHPAGE
+    SEARCHPAGE,
+    WORDPAGE
 };
 
 class MainWindow : public QMainWindow
@@ -49,6 +51,7 @@ private:
     std::unique_ptr<AZListPage> az_list;
     std::unique_ptr<DListPage> dlist_page;
     std::unique_ptr<SearchPage> search_page;
+    std::unique_ptr<WordPage> word_page;
 };
 #endif // MAINWINDOW_H
 

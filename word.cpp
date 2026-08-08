@@ -5,12 +5,14 @@
 #include <QJsonArray>
 #include <QJsonValue>
 #include <memory>
+#include <QSettings>
 
 Word::Word(QString t) : term(t)
 {
     dateAdded = QDate::currentDate();
     nextReviewDate = dateAdded;
     correctReviews = 0;
+    todayReviewed = {false, false};
 }
 
 std::map<QString, std::unique_ptr<Word>> Word::allWords;
@@ -35,6 +37,9 @@ void Word::loadWords()
         w->correctReviews = wordObj["correctReviews"].toInt();
         w->dateAdded = QDate::fromString(wordObj["dateAdded"].toString(), "yyyy/MM/dd");
         w->nextReviewDate = QDate::fromString(wordObj["nextReviewDate"].toString(), "yyyy/MM/dd");
+        w->todayReviewed.first = wordObj["todayReviewedFirst"].toBool();
+        w->todayReviewed.second = wordObj["todayReviewedSecond"].toBool();
+
         for (auto syn : wordObj["synonyms"].toArray())
             w->synonyms.push_back(syn.toString());
         for (auto tra : wordObj["translations"].toArray())
@@ -56,6 +61,8 @@ void Word::saveFile()
         wordObj["correctReviews"] = w->correctReviews;
         wordObj["dateAdded"] = w->dateAdded.toString("yyyy/MM/dd");
         wordObj["nextReviewDate"] = w->nextReviewDate.toString("yyyy/MM/dd");
+        wordObj["todayReviewedFirst"] = w->todayReviewed.first;
+        wordObj["todayReviewedSecond"] = w->todayReviewed.second;
 
         QJsonArray synonymsArray;
         for (const QString &syn : w->synonyms)
@@ -108,5 +115,19 @@ void Word::setCorrects(int c)
             break;
         default:
             break;
+    }
+}
+
+void Word::resetDailyReviewStatusIfNeeded()
+{
+    QSettings settings("YourAppName", "VocabApp");
+    QDate lastActiveDate = settings.value("lastActiveDate").toDate();
+    QDate today = QDate::currentDate();
+
+    if (lastActiveDate != today) {
+        for (const auto& [key, w] : allWords) {
+            w->setReviewed({false, false});
+        }
+        settings.setValue("lastActiveDate", today);
     }
 }
