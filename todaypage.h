@@ -24,5 +24,15 @@ private:
     void setupUI();
     void updateList();
     QVBoxLayout *setupList();
+
+public:
+    QVector<Word*> getRemaining(){return remainingWords;}
 };
 #endif // TODAYPAGE_H
+
+
+
+
+
+
+
