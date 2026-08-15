@@ -170,6 +170,7 @@ void WordPage::widgetsLoad()
     });
     connect(knowButton, &QPushButton::clicked, this, [this](){
         theWord->setReviewed({true, true});
+        Word::saveFile();
         index++;
         if (index == Words.size()){
             MainWindow::changeStack(pageEnum::TODAYLIST);
@@ -186,6 +187,7 @@ void WordPage::widgetsLoad()
     });
     connect(dontKnowButton, &QPushButton::clicked, this, [this](){
         theWord->setReviewed({true, false});
+        Word::saveFile();
         index++;
         if (index == Words.size()){
             MainWindow::changeStack(pageEnum::TODAYLIST);
@@ -199,6 +201,50 @@ void WordPage::widgetsLoad()
         exampleLabel2->hide();
         synonymsArea->hide();
         translationsArea->hide();
+    });
+    connect(saveButton, &QPushButton::clicked, this, [this](){
+        if (!termEdit->text().length()){
+            return;
+        }
+        auto it = Word::allWords.find(termEdit->text());
+        if (it != Word::allWords.end()){
+            return;
+        }
+        theWord->setTerm(termEdit->text());
+        theWord->setPOS(POSEdit->currentText());
+        theWord->setExample(exampleEdit->text());
+
+        Word::saveFile();
+        changeToShow();
+    });
+    connect(cancelButton, &QPushButton::clicked, this, [this](){
+        changeToShow();
+    });
+    connect(synonymButton, &QPushButton::clicked, this, [this](){
+        if (!synonymEdit->text().length()){
+            return;
+        }
+        for (auto syn : theWord->getSynonyms())
+            if (syn == synonymEdit->text()){
+                synonymEdit->setText("");
+                return;
+            }
+        theWord->addSynonym(synonymEdit->text());
+        Word::saveFile();
+        synonymEdit->setText("");
+    });
+    connect(translationButton, &QPushButton::clicked, this, [this](){
+        if (!translationEdit->text().length()){
+            return;
+        }
+        for (auto tra : theWord->getTranslations())
+            if(tra == translationEdit->text()){
+                translationEdit->setText("");
+                return;
+            }
+        theWord->addTranslation(translationEdit->text());
+        Word::saveFile();
+        translationEdit->setText("");
     });
 
 
