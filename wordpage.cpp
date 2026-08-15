@@ -18,8 +18,8 @@ void WordPage::refresh()
     QWidget* widget = MainWindow::m_stack->widget(pageEnum::TODAYLIST);
     TodayPage* page = qobject_cast<TodayPage*>(widget);
     if (page){
-        theWord = page->getRemaining()[index];
-        endIndex = page->getRemaining().size();
+        Words = page->getRemaining();
+        theWord = Words[index];
     }
 
     showCounter = 0;
@@ -40,63 +40,11 @@ void WordPage::changeToShow()
     exampleLabel2->hide();
     synonymsArea->hide();
     translationsArea->hide();
-
+    showCounter = 0;
 
 
     if (theWord){
-        termLabel->setText(theWord->getTerm());
-        POSLabel->setText( "(" + theWord->getPOS() + ")");
-        exampleLabel2->setText(theWord->getExample());
-        QFontMetrics fm(exampleLabel2->font());
-        exampleLabel2->setFixedWidth(fm.horizontalAdvance(exampleLabel2->text()) + 80);
-
-        QVBoxLayout* synLayout = new QVBoxLayout();
-        QWidget* synWidget = new QWidget();
-        for (auto s : theWord->getSynonyms()){
-            QLabel* label = new QLabel(s);
-            label->setStyleSheet("QLabel {"
-                                 "   background-color: #f5ecd7;"
-                                 "   color: #1c3346;"
-                                 "   font-size: 15px;"
-                                 "   font-weight: bold;"
-                                 "   font-family: 'Trebuchet MS', 'Segoe UI';"
-                                 "   border-radius: 8px;"
-                                 "   padding: 4px 10px;"
-                                 "}");
-            synLayout->addWidget(label);
-        }
-        synWidget->setAutoFillBackground(false);
-        synWidget->setStyleSheet("background-color: transparent;");
-        synWidget->setLayout(synLayout);
-        QWidget* oldSynWidget = synonymsArea->takeWidget();
-        if (oldSynWidget)
-            oldSynWidget->deleteLater();
-        synonymsArea->setWidget(synWidget);
-
-
-        QVBoxLayout* tranLayout = new QVBoxLayout();
-        QWidget* tranWidget = new QWidget();
-        for (auto t : theWord->getTranslations()){
-            QLabel* label = new QLabel(t);
-            label->setStyleSheet("QLabel {"
-                                 "   background-color: #f5ecd7;"
-                                 "   color: #1c3346;"
-                                 "   font-size: 15px;"
-                                 "   font-weight: bold;"
-                                 "   font-family: 'Trebuchet MS', 'Segoe UI';"
-                                 "   border-radius: 8px;"
-                                 "   padding: 4px 10px;"
-                                 "}");
-            label->adjustSize();
-            tranLayout->addWidget(label);
-        }
-        tranWidget->setAutoFillBackground(false);
-        tranWidget->setStyleSheet("background-color: transparent;");
-        tranWidget->setLayout(tranLayout);
-        QWidget* oldTranWidget = translationsArea->takeWidget();
-        if (oldTranWidget)
-            oldTranWidget->deleteLater();
-        translationsArea->setWidget(tranWidget);
+        updateWidgets();
     }
 }
 
@@ -219,6 +167,38 @@ void WordPage::widgetsLoad()
         default:
             break;
         }
+    });
+    connect(knowButton, &QPushButton::clicked, this, [this](){
+        theWord->setReviewed({true, true});
+        index++;
+        if (index == Words.size()){
+            MainWindow::changeStack(pageEnum::TODAYLIST);
+            return;
+        }
+
+        theWord = Words[index];
+        updateWidgets();
+        showCounter = 0;
+        POSLabel->hide();
+        exampleLabel2->hide();
+        synonymsArea->hide();
+        translationsArea->hide();
+    });
+    connect(dontKnowButton, &QPushButton::clicked, this, [this](){
+        theWord->setReviewed({true, false});
+        index++;
+        if (index == Words.size()){
+            MainWindow::changeStack(pageEnum::TODAYLIST);
+            return;
+        }
+
+        theWord = Words[index];
+        updateWidgets();
+        showCounter = 0;
+        POSLabel->hide();
+        exampleLabel2->hide();
+        synonymsArea->hide();
+        translationsArea->hide();
     });
 
 
@@ -391,6 +371,63 @@ void WordPage::widgetsLoad()
         "   background-color: #6fbce8;"
         "}");
     translationsArea->setStyleSheet(synonymsArea->styleSheet());
+}
+
+void WordPage::updateWidgets()
+{
+    termLabel->setText(theWord->getTerm());
+    POSLabel->setText( "(" + theWord->getPOS() + ")");
+    exampleLabel2->setText(theWord->getExample());
+    QFontMetrics fm(exampleLabel2->font());
+    exampleLabel2->setFixedWidth(fm.horizontalAdvance(exampleLabel2->text()) + 80);
+
+    QVBoxLayout* synLayout = new QVBoxLayout();
+    QWidget* synWidget = new QWidget();
+    for (auto s : theWord->getSynonyms()){
+        QLabel* label = new QLabel(s);
+        label->setStyleSheet("QLabel {"
+                             "   background-color: #f5ecd7;"
+                             "   color: #1c3346;"
+                             "   font-size: 15px;"
+                             "   font-weight: bold;"
+                             "   font-family: 'Trebuchet MS', 'Segoe UI';"
+                             "   border-radius: 8px;"
+                             "   padding: 4px 10px;"
+                             "}");
+        synLayout->addWidget(label);
+    }
+    synWidget->setAutoFillBackground(false);
+    synWidget->setStyleSheet("background-color: transparent;");
+    synWidget->setLayout(synLayout);
+    QWidget* oldSynWidget = synonymsArea->takeWidget();
+    if (oldSynWidget)
+        oldSynWidget->deleteLater();
+    synonymsArea->setWidget(synWidget);
+
+
+    QVBoxLayout* tranLayout = new QVBoxLayout();
+    QWidget* tranWidget = new QWidget();
+    for (auto t : theWord->getTranslations()){
+        QLabel* label = new QLabel(t);
+        label->setStyleSheet("QLabel {"
+                             "   background-color: #f5ecd7;"
+                             "   color: #1c3346;"
+                             "   font-size: 15px;"
+                             "   font-weight: bold;"
+                             "   font-family: 'Trebuchet MS', 'Segoe UI';"
+                             "   border-radius: 8px;"
+                             "   padding: 4px 10px;"
+                             "}");
+        label->adjustSize();
+        tranLayout->addWidget(label);
+    }
+    tranWidget->setAutoFillBackground(false);
+    tranWidget->setStyleSheet("background-color: transparent;");
+    tranWidget->setLayout(tranLayout);
+    QWidget* oldTranWidget = translationsArea->takeWidget();
+    if (oldTranWidget)
+        oldTranWidget->deleteLater();
+    translationsArea->setWidget(tranWidget);
 }
 
 void WordPage::layoutLoad()

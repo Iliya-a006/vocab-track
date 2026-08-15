@@ -27,11 +27,12 @@ public:
 private:
     void layoutLoad();
     void widgetsLoad();
+    void updateWidgets();
     void changeToEdit();
     void changeToShow();
 
     Word* theWord;
-    int endIndex;
+    QVector<Word*> Words;
     int showCounter;
 
     QLabel* termLabel;
