@@ -1,14 +1,28 @@
 #include "wordpage.h"
+#include "mainwindow.h"
+#include "todaypage.h"
 
 WordPage::WordPage(QWidget *parent)
     : Page(parent)
 {
+    this->background = ":/prefix1/images/Bg1";
+
     widgetsLoad();
     layoutLoad();
 }
 
+int WordPage::index = 0;
+
 void WordPage::refresh()
 {
+    QWidget* widget = MainWindow::m_stack->widget(pageEnum::TODAYLIST);
+    TodayPage* page = qobject_cast<TodayPage*>(widget);
+    if (page){
+        theWord = page->getRemaining()[index];
+        endIndex = page->getRemaining().size();
+    }
+
+    showCounter = 0;
     changeToShow();
 }
 
@@ -19,8 +33,71 @@ void WordPage::changeToShow()
     synonymsStack->setCurrentIndex(0);
     translationsStack->setCurrentIndex(0);
     footButtonsStack->setCurrentIndex(0);
-
     editLabel->hide();
+    showButton->show();
+    editButton->show();
+    POSLabel->hide();
+    exampleLabel2->hide();
+    synonymsArea->hide();
+    translationsArea->hide();
+
+
+
+    if (theWord){
+        termLabel->setText(theWord->getTerm());
+        POSLabel->setText( "(" + theWord->getPOS() + ")");
+        exampleLabel2->setText(theWord->getExample());
+        QFontMetrics fm(exampleLabel2->font());
+        exampleLabel2->setFixedWidth(fm.horizontalAdvance(exampleLabel2->text()) + 80);
+
+        QVBoxLayout* synLayout = new QVBoxLayout();
+        QWidget* synWidget = new QWidget();
+        for (auto s : theWord->getSynonyms()){
+            QLabel* label = new QLabel(s);
+            label->setStyleSheet("QLabel {"
+                                 "   background-color: #f5ecd7;"
+                                 "   color: #1c3346;"
+                                 "   font-size: 15px;"
+                                 "   font-weight: bold;"
+                                 "   font-family: 'Trebuchet MS', 'Segoe UI';"
+                                 "   border-radius: 8px;"
+                                 "   padding: 4px 10px;"
+                                 "}");
+            synLayout->addWidget(label);
+        }
+        synWidget->setAutoFillBackground(false);
+        synWidget->setStyleSheet("background-color: transparent;");
+        synWidget->setLayout(synLayout);
+        QWidget* oldSynWidget = synonymsArea->takeWidget();
+        if (oldSynWidget)
+            oldSynWidget->deleteLater();
+        synonymsArea->setWidget(synWidget);
+
+
+        QVBoxLayout* tranLayout = new QVBoxLayout();
+        QWidget* tranWidget = new QWidget();
+        for (auto t : theWord->getTranslations()){
+            QLabel* label = new QLabel(t);
+            label->setStyleSheet("QLabel {"
+                                 "   background-color: #f5ecd7;"
+                                 "   color: #1c3346;"
+                                 "   font-size: 15px;"
+                                 "   font-weight: bold;"
+                                 "   font-family: 'Trebuchet MS', 'Segoe UI';"
+                                 "   border-radius: 8px;"
+                                 "   padding: 4px 10px;"
+                                 "}");
+            label->adjustSize();
+            tranLayout->addWidget(label);
+        }
+        tranWidget->setAutoFillBackground(false);
+        tranWidget->setStyleSheet("background-color: transparent;");
+        tranWidget->setLayout(tranLayout);
+        QWidget* oldTranWidget = translationsArea->takeWidget();
+        if (oldTranWidget)
+            oldTranWidget->deleteLater();
+        translationsArea->setWidget(tranWidget);
+    }
 }
 
 void WordPage::changeToEdit()
@@ -30,20 +107,29 @@ void WordPage::changeToEdit()
     synonymsStack->setCurrentIndex(1);
     translationsStack->setCurrentIndex(1);
     footButtonsStack->setCurrentIndex(1);
-
     editLabel->show();
+    showButton->hide();
+    editButton->hide();
+
+    if (theWord){
+        termEdit->setText(theWord->getTerm());
+        POSEdit->setCurrentText(theWord->getPOS());
+        exampleEdit->setText(theWord->getExample());
+        synonymEdit->setText("");
+        translationEdit->setText("");
+    }
 }
 
 void WordPage::widgetsLoad()
 {
     termLabel = new QLabel(this);
     POSLabel = new QLabel(this);
-    exampleLabel = new QLabel("Example", this);
+    exampleLabel1 = new QLabel("Example", this);
+    exampleLabel2 = new QLabel(this);
     synonymLabel = new QLabel("Synonyms", this);
     translationLabel = new QLabel("Translations", this);
     editLabel = new QLabel("Editing Word", this);
 
-    exampleArea = new QScrollArea(this);
     synonymsArea = new QScrollArea(this);
     translationsArea = new QScrollArea(this);
 
@@ -71,22 +157,22 @@ void WordPage::widgetsLoad()
 
     termLabel->setFixedSize(300, 40);
     POSLabel->setFixedSize(150, 30);
-    exampleLabel->setFixedSize(200, 25);
+    exampleLabel1->setFixedSize(200, 25);
+    exampleLabel2->setFixedHeight(40);
     synonymLabel->setFixedSize(200, 25);
     translationLabel->setFixedSize(200, 25);
     editLabel->setFixedSize(200, 30);
 
-    exampleArea->setFixedSize(320, 100);
     synonymsArea->setFixedSize(320, 100);
     translationsArea->setFixedSize(320, 100);
 
     showButton->setFixedSize(120, 40);
     editButton->setFixedSize(120, 40);
     exitButton->setFixedSize(120, 40);
-    knowButton->setFixedSize(120, 40);
-    dontKnowButton->setFixedSize(120, 40);
-    synonymButton->setFixedSize(120, 40);
-    translationButton->setFixedSize(120, 40);
+    knowButton->setFixedSize(150, 40);
+    dontKnowButton->setFixedSize(150, 40);
+    synonymButton->setFixedSize(80, 30);
+    translationButton->setFixedSize(80, 30);
     saveButton->setFixedSize(120, 40);
     cancelButton->setFixedSize(120, 40);
 
@@ -99,18 +185,59 @@ void WordPage::widgetsLoad()
 
     termLabel->setAlignment(Qt::AlignCenter);
     POSLabel->setAlignment(Qt::AlignCenter);
-    exampleLabel->setAlignment(Qt::AlignCenter);
+    exampleLabel1->setAlignment(Qt::AlignCenter);
+    exampleLabel2->setAlignment(Qt::AlignCenter);
     synonymLabel->setAlignment(Qt::AlignCenter);
     translationLabel->setAlignment(Qt::AlignCenter);
     editLabel->setAlignment(Qt::AlignCenter);
 
 
+    connect(exitButton, &QPushButton::clicked, this, [](){
+        MainWindow::changeStack(pageEnum::TODAYLIST);
+    });
+    connect(editButton, &QPushButton::clicked, this, [this](){
+        changeToEdit();
+    });
+    connect(showButton, &QPushButton::clicked, this, [this](){
+        switch (showCounter) {
+        case 0:
+            POSLabel->show();
+            ++showCounter;
+            break;
+        case 1:
+            exampleLabel2->show();
+            ++showCounter;
+            break;
+        case 2:
+            synonymsArea->show();
+            ++showCounter;
+            break;
+        case 3:
+            translationsArea->show();
+            ++showCounter;
+            break;
+        default:
+            break;
+        }
+    });
+
+
     termLabel->setStyleSheet("QLabel {"
-                             "   background-color: transparent;"
-                             "   color: white;"
-                             "   font-size: 18px;"
+                             "   background-color: #f5ecd7;"
+                             "   color: #1c3346;"
+                             "   font-size: 26px;"
+                             "   font-weight: bold;"
                              "   font-family: 'Trebuchet MS', 'Segoe UI';"
+                             "   border-radius: 8px;"
+                             "   padding: 4px 10px;"
                              "}");
+
+    POSLabel->setStyleSheet("QLabel {"
+                                            "   background-color: transparent;"
+                                            "   color: white;"
+                                            "   font-size: 18px;"
+                                            "   font-family: 'Trebuchet MS', 'Segoe UI';"
+                                            "}");
 
     QString fieldLabelStyle =
         "QLabel {"
@@ -119,11 +246,28 @@ void WordPage::widgetsLoad()
         "   font-size: 14px;"
         "   font-family: 'Trebuchet MS', 'Segoe UI';"
         "}";
-    POSLabel->setStyleSheet(fieldLabelStyle);
-    exampleLabel->setStyleSheet(fieldLabelStyle);
+    exampleLabel1->setStyleSheet(fieldLabelStyle);
     synonymLabel->setStyleSheet(fieldLabelStyle);
     translationLabel->setStyleSheet(fieldLabelStyle);
-    editLabel->setStyleSheet(fieldLabelStyle);
+    editLabel->setStyleSheet("QLabel {"
+                             "   background-color: #f5ecd7;"
+                             "   color: #1c3346;"
+                             "   font-size: 18px;"
+                             "   font-weight: bold;"
+                             "   font-family: 'Trebuchet MS', 'Segoe UI';"
+                             "   border-radius: 8px;"
+                             "   padding: 4px 10px;"
+                             "}");
+    exampleLabel2->setStyleSheet("QLabel {"
+                                 "   background-color: #1c3346;"
+                                 "   color: white;"
+                                 "   font-size: 20px;"
+                                 "   font-weight: bold;"
+                                 "   font-family: 'Trebuchet MS', 'Segoe UI';"
+                                 "   border: 2px solid #5aa9d6;"
+                                 "   border-radius: 10px;"
+                                 "   padding: 6px 16px;"
+                                 "}");
 
     QString lineEditStyle =
         "QLineEdit {"
@@ -223,6 +367,30 @@ void WordPage::widgetsLoad()
         "}";
     synonymButton->setStyleSheet(smallAddButtonStyle);
     translationButton->setStyleSheet(smallAddButtonStyle);
+
+    synonymsArea->setStyleSheet(
+        "QScrollArea {"
+        "   background-color: #16232f;"
+        "   border: 2px solid #5aa9d6;"
+        "   border-radius: 10px;"
+        "}"
+        "QAbstractScrollArea > QWidget#qt_scrollarea_viewport {"
+        "   background-color: transparent;"
+        "}"
+        "QScrollBar:vertical {"
+        "   background-color: #1c3346;"
+        "   width: 10px;"
+        "   border-radius: 5px;"
+        "}"
+        "QScrollBar::handle:vertical {"
+        "   background-color: #5aa9d6;"
+        "   border-radius: 5px;"
+        "   min-height: 20px;"
+        "}"
+        "QScrollBar::handle:vertical:hover {"
+        "   background-color: #6fbce8;"
+        "}");
+    translationsArea->setStyleSheet(synonymsArea->styleSheet());
 }
 
 void WordPage::layoutLoad()
@@ -248,8 +416,10 @@ void WordPage::layoutLoad()
     QHBoxLayout* termInnerLayout2 = new QHBoxLayout;
     QWidget* termWidget1 = new QWidget;
     QWidget* termWidget2 = new QWidget;
+    termInnerLayout1->addStretch(1);
     termInnerLayout1->addWidget(termLabel);
     termInnerLayout1->addWidget(POSLabel);
+    termInnerLayout1->addStretch(1);
     termWidget1->setLayout(termInnerLayout1);
     termInnerLayout2->addWidget(termEdit);
     termInnerLayout2->addWidget(POSEdit);
@@ -261,7 +431,7 @@ void WordPage::layoutLoad()
     QHBoxLayout* exampleInnerLayout2 = new QHBoxLayout;
     QWidget* exampleWidget1 = new QWidget;
     QWidget* exampleWidget2 = new QWidget;
-    exampleInnerLayout1->addWidget(exampleArea);
+    exampleInnerLayout1->addWidget(exampleLabel2);
     exampleWidget1->setLayout(exampleInnerLayout1);
     exampleInnerLayout2->addWidget(exampleEdit);
     exampleWidget2->setLayout(exampleInnerLayout2);
@@ -296,14 +466,18 @@ void WordPage::layoutLoad()
     QHBoxLayout* footInnerLayout2 = new QHBoxLayout;
     QWidget* footWidget1 = new QWidget;
     QWidget* footWidget2 = new QWidget;
-    footInnerLayout1->addWidget(exitButton);
     footInnerLayout1->addStretch(1);
+    footInnerLayout1->addWidget(exitButton);
+    footInnerLayout1->addStretch(4);
     footInnerLayout1->addWidget(knowButton);
     footInnerLayout1->addWidget(dontKnowButton);
+    footInnerLayout1->addStretch(1);
     footWidget1->setLayout(footInnerLayout1);
-    footInnerLayout2->addWidget(cancelButton);
     footInnerLayout2->addStretch(1);
+    footInnerLayout2->addWidget(cancelButton);
+    footInnerLayout2->addStretch(4);
     footInnerLayout2->addWidget(saveButton);
+    footInnerLayout2->addStretch(1);
     footWidget2->setLayout(footInnerLayout2);
     footButtonsStack->addWidget(footWidget1);
     footButtonsStack->addWidget(footWidget2);
@@ -311,7 +485,7 @@ void WordPage::layoutLoad()
 
     topLayout->addWidget(editLabel);
     termLayout->addLayout(termStack);
-    exampleLayout1->addWidget(exampleLabel);
+    exampleLayout1->addWidget(exampleLabel1);
     exampleLayout2->addLayout(exampleStack);
 
     titlesLayout->addStretch(1);
@@ -328,13 +502,11 @@ void WordPage::layoutLoad()
 
     buttonsRow1->addStretch(1);
     buttonsRow1->addWidget(editButton);
-    buttonsRow1->addStretch(1);
+    buttonsRow1->addStretch(3);
     buttonsRow1->addWidget(showButton);
     buttonsRow1->addStretch(1);
 
-    buttonsRow2->addStretch(1);
     buttonsRow2->addLayout(footButtonsStack);
-    buttonsRow2->addStretch(1);
 
     outerLayout->addStretch(1);
     outerLayout->addLayout(topLayout);

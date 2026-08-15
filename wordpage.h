@@ -9,6 +9,7 @@
 #include <qpushbutton.h>
 #include <qscrollarea.h>
 #include "page.h"
+#include "word.h"
 #include <QStackedLayout>
 
 class WordPage : public Page
@@ -21,20 +22,26 @@ public:
 
     void refresh() override;
 
+    static int index;
+
 private:
     void layoutLoad();
     void widgetsLoad();
     void changeToEdit();
     void changeToShow();
 
+    Word* theWord;
+    int endIndex;
+    int showCounter;
+
     QLabel* termLabel;
     QLabel* POSLabel;
-    QLabel* exampleLabel;
+    QLabel* exampleLabel1;
+    QLabel* exampleLabel2;
     QLabel* synonymLabel;
     QLabel* translationLabel;
     QLabel* editLabel;
 
-    QScrollArea* exampleArea;
     QScrollArea* synonymsArea;
     QScrollArea* translationsArea;
 

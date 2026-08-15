@@ -1,6 +1,7 @@
 #include "todaypage.h"
 #include "word.h"
 #include "mainwindow.h"
+#include "wordpage.h"
 
 TodayPage::TodayPage(QWidget *parent)
     : Page(parent)
@@ -11,6 +12,8 @@ TodayPage::TodayPage(QWidget *parent)
 
 void TodayPage::refresh()
 {
+    WordPage::index = 0;
+
     updateList();
 }
 
@@ -24,7 +27,10 @@ void TodayPage::setupUI()
     connect(backButton, &QPushButton::clicked, this, [](){
         MainWindow::changeStack(pageEnum::MAINMENU);
     });
-    connect(startButton, &QPushButton::clicked, this, [](){
+    connect(startButton, &QPushButton::clicked, this, [this](){
+        if (!remainingWords.size()){
+            return;
+        }
         MainWindow::changeStack(pageEnum::WORDPAGE);
     });
 
