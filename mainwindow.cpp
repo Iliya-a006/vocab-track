@@ -23,8 +23,11 @@ MainWindow::MainWindow(QWidget *parent)
 }
 
 QStackedWidget* MainWindow::m_stack;
+int MainWindow::prevPage = pageEnum::MAINMENU;
 void MainWindow::changeStack(int index)
 {
+    prevPage = m_stack->currentIndex();
+
     MainWindow::m_stack->setCurrentIndex(index);
     m_stack->update();
 

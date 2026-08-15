@@ -38,6 +38,7 @@ public:
 
     static QStackedWidget* m_stack;
     static void changeStack(int index);
+    static int prevPage;
 
 private:
     Ui::MainWindow *ui;
