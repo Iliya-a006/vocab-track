@@ -33,6 +33,7 @@ if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
         dlistpage.h dlistpage.cpp
         searchpage.h searchpage.cpp
         wordpage.h wordpage.cpp
+        screensize.h screensize.cpp
     )
 # Define target properties for Android with Qt 6 as:
 #    set_property(TARGET Vocabulary_app APPEND PROPERTY QT_ANDROID_PACKAGE_SOURCE_DIR

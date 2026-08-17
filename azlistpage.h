@@ -3,6 +3,10 @@
 
 #include "page.h"
 #include <QWidget>
+#include <qboxlayout.h>
+#include <qlabel.h>
+#include <qpushbutton.h>
+#include <qscrollarea.h>
 
 class AZListPage : public Page
 {
@@ -13,6 +17,22 @@ public:
     ~AZListPage();
 
     void refresh() override;
+
+private:
+    QScrollArea* scrollArea;
+    QVector<QPushButton*> allOptions;
+    QVector<QLabel*> Labels;
+    QPushButton* backButton;
+
+    QHBoxLayout* areaLayout;
+    QHBoxLayout* buttonLayout;
+    QVBoxLayout* VLayout;
 };
 
 #endif // AZLISTPAGE_H
+
+
+
+
+
+
