@@ -12,14 +12,20 @@ WordPage::WordPage(QWidget *parent)
 }
 
 int WordPage::index = 0;
+Word* WordPage::entryWord = nullptr;
 
 void WordPage::refresh()
 {
-    QWidget* widget = MainWindow::m_stack->widget(pageEnum::TODAYLIST);
-    TodayPage* page = qobject_cast<TodayPage*>(widget);
-    if (page){
-        Words = page->getRemaining();
-        theWord = Words[index];
+    if (entryWord){
+        theWord = entryWord;
+    }
+    else{
+        QWidget* widget = MainWindow::m_stack->widget(pageEnum::TODAYLIST);
+        TodayPage* page = qobject_cast<TodayPage*>(widget);
+        if (page){
+            Words = page->getRemaining();
+            theWord = Words[index];
+        }
     }
 
     showCounter = 0;
@@ -141,7 +147,8 @@ void WordPage::widgetsLoad()
 
 
     connect(exitButton, &QPushButton::clicked, this, [](){
-        MainWindow::changeStack(pageEnum::TODAYLIST);
+        entryWord = nullptr;
+        MainWindow::changeStack(MainWindow::prevPage);
     });
     connect(editButton, &QPushButton::clicked, this, [this](){
         changeToEdit();
@@ -169,6 +176,10 @@ void WordPage::widgetsLoad()
         }
     });
     connect(knowButton, &QPushButton::clicked, this, [this](){
+        if (MainWindow::prevPage != pageEnum::TODAYLIST){
+            return;
+        }
+
         theWord->setReviewed({true, true});
         Word::saveFile();
         index++;
@@ -186,6 +197,10 @@ void WordPage::widgetsLoad()
         translationsArea->hide();
     });
     connect(dontKnowButton, &QPushButton::clicked, this, [this](){
+        if (MainWindow::prevPage != pageEnum::TODAYLIST){
+            return;
+        }
+
         theWord->setReviewed({true, false});
         Word::saveFile();
         index++;
