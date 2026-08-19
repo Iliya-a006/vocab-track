@@ -1,13 +1,19 @@
 #include "azlistpage.h"
+#include "mainwindow.h"
 #include "screensize.h"
+#include "word.h"
+#include <QScrollBar>
 
 AZListPage::AZListPage(QWidget *parent)
     : Page(parent)
+    , listWidget(nullptr)
 {
     this->background = ":/prefix1/images/Bg3";
 
     scrollArea = new QScrollArea();
     backButton = new QPushButton("Back");
+    scrollArea->setWidgetResizable(true);
+    scrollArea->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
 
     scrollArea->setFixedSize(ScreenSize::getWidth()*5/6, ScreenSize::getHeigth() - 150);
     backButton->setFixedSize(100, 40);
@@ -27,6 +33,15 @@ AZListPage::AZListPage(QWidget *parent)
     VLayout->addStretch(1);
     VLayout->addLayout(buttonLayout);
     VLayout->addStretch(2);
+
+    connect(backButton, &QPushButton::clicked, this, [](){
+        MainWindow::changeStack(pageEnum::MAINMENU);
+    });
+    connect(scrollArea->verticalScrollBar(), &QScrollBar::valueChanged, this, [this](int value){
+        if (value == scrollArea->verticalScrollBar()->maximum()) {
+            loadList();
+        }
+    });
 
     backButton->setStyleSheet(
         "QPushButton {"
@@ -73,7 +88,110 @@ AZListPage::AZListPage(QWidget *parent)
 
 void AZListPage::refresh()
 {
+    refreshList();
+}
 
+void AZListPage::refreshList()
+{
+    if (listWidget){
+        scrollArea->takeWidget();
+        delete listWidget;
+        listWidget = nullptr;
+    }
+
+    listLayout = new QVBoxLayout;
+    listWidget = new QWidget;
+    listWidget->setAutoFillBackground(false);
+    listWidget->setStyleSheet("background-color: transparent;");
+    listLayout->setSpacing(20);
+
+    countWords = 0;
+    it = Word::allWords.begin();
+    loadList();
+    listWidget->setLayout(listLayout);
+    scrollArea->setWidget(listWidget);
+}
+
+void AZListPage::loadList()
+{
+    int count = 0;
+    while(count < 30 && it != Word::allWords.end()){
+        int letterCount = 0;
+        int rowCount = 0;
+
+        QString letter = it->second->getTerm()[0].toUpper();
+        QLabel* label = new QLabel(letter);
+        label->setStyleSheet("QLabel {"
+                             "   background-color: #e6b800;"
+                             "   color: #1c3346;"
+                             "   font-size: 18px;"
+                             "   font-weight: bold;"
+                             "   font-family: 'Trebuchet MS', 'Segoe UI';"
+                             "   border-radius: 8px;"
+                             "   padding: 4px 10px;"
+                             "}");
+
+        QVBoxLayout* BVLayout = new QVBoxLayout;
+        QHBoxLayout* letterLayout = new QHBoxLayout;
+        BVLayout->setSpacing(12);
+
+        int i = 0;
+        QHBoxLayout* buttonsLayout = new QHBoxLayout;
+        buttonsLayout->setSpacing(8);
+
+        while(it != Word::allWords.end() && it->second->getTerm()[0].toUpper() == letter){
+            QPushButton* wordButton = new QPushButton(it->second->getTerm());
+            wordButton->setFixedSize(scrollArea->width()/5, 40);
+            wordButton->setStyleSheet("QPushButton {"
+                                      "   background-color: #f5ecd7;"
+                                      "   color: #1c3346;"
+                                      "   font-size: 15px;"
+                                      "   font-weight: bold;"
+                                      "   font-family: 'Trebuchet MS', 'Segoe UI';"
+                                      "   border-radius: 8px;"
+                                      "   padding: 4px 10px;"
+                                      "   border: none;"
+                                      "}"
+                                      "QPushButton:hover {"
+                                      "   background-color: #ffffff;"
+                                      "}"
+                                      "QPushButton:pressed {"
+                                      "   background-color: #e0d4b0;"
+                                      "}");
+
+            buttonsLayout->addWidget(wordButton);
+            ++i;
+
+            if (i == 4){
+                buttonsLayout->addStretch(1);
+                BVLayout->addLayout(buttonsLayout);
+                rowCount++;
+                buttonsLayout = new QHBoxLayout;
+                buttonsLayout->setSpacing(8);
+                i = 0;
+            }
+
+            letterCount++;
+            count++;
+            ++it;
+        }
+
+        if (i > 0){
+            buttonsLayout->addStretch(1);
+            BVLayout->addLayout(buttonsLayout);
+            rowCount++;
+        }
+
+        label->setFixedSize(40, rowCount*40 + (rowCount-1)*12);
+        letterLayout->addWidget(label);
+        letterLayout->addSpacing(12);
+        letterLayout->addLayout(BVLayout);
+        letterLayout->addStretch(1);
+
+        listLayout->addLayout(letterLayout);
+        listLayout->addSpacing(16);
+    }
+    listLayout->addStretch(1);
 }
 
 AZListPage::~AZListPage()

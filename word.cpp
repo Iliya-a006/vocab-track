@@ -15,7 +15,7 @@ Word::Word(QString t) : term(t)
     todayReviewed = {false, false};
 }
 
-std::map<QString, std::unique_ptr<Word>> Word::allWords;
+std::map<QString, std::unique_ptr<Word>, CaseInsensitiveLess> Word::allWords;
 void Word::loadWords()
 {
     QFile file("words.json");
