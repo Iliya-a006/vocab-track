@@ -6,6 +6,7 @@
 int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);
+    Word::loadWords();
     Word::resetDailyReviewStatusIfNeeded();
     MainWindow w;
     QRect screenGeometry = QApplication::primaryScreen()->availableGeometry();

@@ -157,8 +157,11 @@ QVBoxLayout* TodayPage::setupList()
     remainingWords.clear();
 
     for (const auto& [key, w] : Word::allWords) {
-        if (w->getNextDate() <= QDate::currentDate()) {
-            if (w->getReviewed().first)
+        bool dueToday = w->getNextDate() <= QDate::currentDate();
+        bool reviewedToday = w->getReviewed().first;
+
+        if (dueToday || reviewedToday) {
+            if (reviewedToday)
                 reviewedWords.push_back(w.get());
             else
                 remainingWords.push_back(w.get());
