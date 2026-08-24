@@ -5,12 +5,18 @@
 #include <QDate>
 #include <map>
 
+struct CaseInsensitiveLess {
+    bool operator()(const QString& a, const QString& b) const {
+        return a.toLower() < b.toLower();
+    }
+};
+
 class Word
 {
 public:
     Word(QString t);
 
-    static std::map<QString, std::unique_ptr<Word>> allWords;
+    static std::map<QString, std::unique_ptr<Word>, CaseInsensitiveLess> allWords;
     static void loadWords();
     static void saveFile();
     static void resetDailyReviewStatusIfNeeded();

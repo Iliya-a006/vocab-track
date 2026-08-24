@@ -23,6 +23,7 @@ public:
     void refresh() override;
 
     static int index;
+    static Word* entryWord;
 
 private:
     void layoutLoad();
