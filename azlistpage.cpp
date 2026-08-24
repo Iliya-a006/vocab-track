@@ -3,6 +3,7 @@
 #include "screensize.h"
 #include "word.h"
 #include <QScrollBar>
+#include "wordpage.h"
 
 AZListPage::AZListPage(QWidget *parent)
     : Page(parent)
@@ -98,6 +99,7 @@ void AZListPage::refreshList()
         delete listWidget;
         listWidget = nullptr;
     }
+    //Words.clear();
 
     listLayout = new QVBoxLayout;
     listWidget = new QWidget;
@@ -105,7 +107,6 @@ void AZListPage::refreshList()
     listWidget->setStyleSheet("background-color: transparent;");
     listLayout->setSpacing(20);
 
-    countWords = 0;
     it = Word::allWords.begin();
     loadList();
     listWidget->setLayout(listLayout);
@@ -116,7 +117,6 @@ void AZListPage::loadList()
 {
     int count = 0;
     while(count < 30 && it != Word::allWords.end()){
-        int letterCount = 0;
         int rowCount = 0;
 
         QString letter = it->second->getTerm()[0].toUpper();
@@ -140,8 +140,18 @@ void AZListPage::loadList()
         buttonsLayout->setSpacing(8);
 
         while(it != Word::allWords.end() && it->second->getTerm()[0].toUpper() == letter){
-            QPushButton* wordButton = new QPushButton(it->second->getTerm());
+            QString term = it->second->getTerm();
+            QPushButton* wordButton = new QPushButton(term);
             wordButton->setFixedSize(scrollArea->width()/5, 40);
+            connect(wordButton, &QPushButton::clicked, this, [term](){
+                auto found = Word::allWords.find(term);
+                if (found == Word::allWords.end()){
+                    return;
+                }
+
+                WordPage::entryWord = found->second.get();
+                MainWindow::changeStack(pageEnum::WORDPAGE);
+            });
             wordButton->setStyleSheet("QPushButton {"
                                       "   background-color: #f5ecd7;"
                                       "   color: #1c3346;"
@@ -171,7 +181,6 @@ void AZListPage::loadList()
                 i = 0;
             }
 
-            letterCount++;
             count++;
             ++it;
         }

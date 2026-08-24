@@ -24,8 +24,6 @@ private:
     void loadList();
 
     QScrollArea* scrollArea;
-    QVector<QPushButton*> allOptions;
-    QVector<QLabel*> Labels;
     QPushButton* backButton;
 
     QHBoxLayout* areaLayout;
@@ -36,7 +34,6 @@ private:
     QWidget* listWidget;
     QVector<QHBoxLayout*> listHLayouts;
 
-    int countWords;
     std::map<QString, std::unique_ptr<Word>, CaseInsensitiveLess>::iterator it;
 };
 
