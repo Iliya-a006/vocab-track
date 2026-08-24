@@ -222,7 +222,7 @@ void WordPage::widgetsLoad()
             return;
         }
         auto it = Word::allWords.find(termEdit->text());
-        if (it != Word::allWords.end()){
+        if (it == Word::allWords.end()){
             return;
         }
         theWord->setTerm(termEdit->text());
