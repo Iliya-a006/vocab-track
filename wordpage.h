@@ -35,6 +35,8 @@ private:
     Word* theWord;
     QVector<Word*> Words;
     int showCounter;
+    bool synDelete = false;
+    bool tranDelete = false;
 
     QLabel* termLabel;
     QLabel* POSLabel;
@@ -48,6 +50,7 @@ private:
     QScrollArea* translationsArea;
 
     QPushButton* showButton;
+    QPushButton* deleteButton;
     QPushButton* editButton;
     QPushButton* exitButton;
     QPushButton* knowButton;

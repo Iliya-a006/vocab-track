@@ -60,6 +60,7 @@ SearchPage::SearchPage(QWidget *parent)
     connect(backButton, &QPushButton::clicked, this, [](){
         MainWindow::changeStack(pageEnum::MAINMENU);
     });
+    connect(searchEdit, &QLineEdit::returnPressed, searchButton, &QPushButton::click);
 
 
     topLabel->setStyleSheet(

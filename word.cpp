@@ -14,6 +14,14 @@ Word::Word(QString t) : term(t)
     correctReviews = 0;
     todayReviewed = {false, false};
 }
+void Word::deleteSynonym(QString s)
+{
+    synonyms.erase(std::remove(synonyms.begin(), synonyms.end(), s));
+}
+void Word::deleteTranslation(QString t)
+{
+    translations.erase(std::remove(translations.begin(), translations.end(), t));
+}
 
 std::map<QString, std::unique_ptr<Word>, CaseInsensitiveLess> Word::allWords;
 void Word::loadWords()

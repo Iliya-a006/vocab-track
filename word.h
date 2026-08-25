@@ -49,6 +49,8 @@ public:
     void setExample(QString e){example = e;}
     void addSynonym(QString s){synonyms.push_back(s);}
     void addTranslation(QString t){translations.push_back(t);}
+    void deleteSynonym(QString s);
+    void deleteTranslation(QString t);
     void setCorrects(int c);
     void setReviewed(std::pair<bool, bool> r){todayReviewed = r;}
 

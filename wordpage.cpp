@@ -42,6 +42,7 @@ void WordPage::changeToShow()
     editLabel->hide();
     showButton->show();
     editButton->show();
+    deleteButton->show();
     POSLabel->hide();
     exampleLabel2->hide();
     synonymsArea->hide();
@@ -64,6 +65,7 @@ void WordPage::changeToEdit()
     editLabel->show();
     showButton->hide();
     editButton->hide();
+    deleteButton->hide();
 
     if (theWord){
         termEdit->setText(theWord->getTerm());
@@ -88,6 +90,7 @@ void WordPage::widgetsLoad()
     translationsArea = new QScrollArea(this);
 
     showButton = new QPushButton("Show", this);
+    deleteButton = new QPushButton("Delete", this);
     editButton = new QPushButton("Edit", this);
     exitButton = new QPushButton("Exit", this);
     knowButton = new QPushButton("Know It", this);
@@ -121,6 +124,7 @@ void WordPage::widgetsLoad()
     translationsArea->setFixedSize(320, 100);
 
     showButton->setFixedSize(120, 40);
+    deleteButton->setFixedSize(120, 40);
     editButton->setFixedSize(120, 40);
     exitButton->setFixedSize(120, 40);
     knowButton->setFixedSize(150, 40);
@@ -152,6 +156,11 @@ void WordPage::widgetsLoad()
     });
     connect(editButton, &QPushButton::clicked, this, [this](){
         changeToEdit();
+    });
+    connect(deleteButton, &QPushButton::clicked, this, [this](){
+        Word::allWords.erase(theWord->getTerm());
+        Word::saveFile();
+        MainWindow::changeStack(MainWindow::prevPage);
     });
     connect(showButton, &QPushButton::clicked, this, [this](){
         switch (showCounter) {
@@ -241,27 +250,115 @@ void WordPage::widgetsLoad()
         if (!synonymEdit->text().length()){
             return;
         }
-        for (auto syn : theWord->getSynonyms())
-            if (syn == synonymEdit->text()){
-                synonymEdit->setText("");
-                return;
-            }
-        theWord->addSynonym(synonymEdit->text());
-        Word::saveFile();
-        synonymEdit->setText("");
+        if (synDelete){
+            synDelete = false;
+            theWord->deleteSynonym(synonymEdit->text());
+            Word::saveFile();
+            synonymEdit->setText("");
+        }
+        else{
+            theWord->addSynonym(synonymEdit->text());
+            Word::saveFile();
+            synonymEdit->setText("");
+        }
     });
     connect(translationButton, &QPushButton::clicked, this, [this](){
         if (!translationEdit->text().length()){
             return;
         }
-        for (auto tra : theWord->getTranslations())
-            if(tra == translationEdit->text()){
-                translationEdit->setText("");
+        if (tranDelete){
+            tranDelete = false;
+            theWord->deleteTranslation(translationEdit->text());
+            Word::saveFile();
+            translationEdit->setText("");
+        }
+        else{
+            theWord->addTranslation(translationEdit->text());
+            Word::saveFile();
+            translationEdit->setText("");
+        }
+    });
+    connect(synonymEdit, &QLineEdit::textChanged, this, [this](const QString &text) {
+        for (auto s : theWord->getSynonyms()){
+            if (synonymEdit->text() == s){
+                synDelete = true;
+                synonymButton->setText("Delete");
+                synonymButton->setStyleSheet("QPushButton {"
+                                             "   background-color: #632727;"
+                                             "   color: #fbeaea;"
+                                             "   border: 2px solid #d65a5a;"
+                                             "   border-radius: 8px;"
+                                             "   padding: 4px 10px;"
+                                             "   font-size: 13px;"
+                                             "   font-weight: bold;"
+                                             "}"
+                                             "QPushButton:hover {"
+                                             "   background-color: #943f3f;"
+                                             "}"
+                                             "QPushButton:pressed {"
+                                             "   background-color: #2f1616;"
+                                             "}");
                 return;
             }
-        theWord->addTranslation(translationEdit->text());
-        Word::saveFile();
-        translationEdit->setText("");
+        }
+        synDelete = false;
+        synonymButton->setText("Save");
+        synonymButton->setStyleSheet("QPushButton {"
+                                     "   background-color: #274a63;"
+                                     "   color: #eaf4fb;"
+                                     "   border: 2px solid #5aa9d6;"
+                                     "   border-radius: 8px;"
+                                     "   padding: 4px 10px;"
+                                     "   font-size: 13px;"
+                                     "   font-weight: bold;"
+                                     "}"
+                                     "QPushButton:hover {"
+                                     "   background-color: #3f7094;"
+                                     "}"
+                                     "QPushButton:pressed {"
+                                     "   background-color: #16232f;"
+                                     "}");
+    });
+    connect(translationEdit, &QLineEdit::textChanged, this, [this](const QString &text) {
+        for (auto s : theWord->getTranslations()){
+            if (translationEdit->text() == s){
+                tranDelete = true;
+                translationButton->setText("Delete");
+                translationButton->setStyleSheet("QPushButton {"
+                                             "   background-color: #632727;"
+                                             "   color: #fbeaea;"
+                                             "   border: 2px solid #d65a5a;"
+                                             "   border-radius: 8px;"
+                                             "   padding: 4px 10px;"
+                                             "   font-size: 13px;"
+                                             "   font-weight: bold;"
+                                             "}"
+                                             "QPushButton:hover {"
+                                             "   background-color: #943f3f;"
+                                             "}"
+                                             "QPushButton:pressed {"
+                                             "   background-color: #2f1616;"
+                                             "}");
+                return;
+            }
+        }
+        tranDelete = false;
+        translationButton->setText("Save");
+        translationButton->setStyleSheet("QPushButton {"
+                                     "   background-color: #274a63;"
+                                     "   color: #eaf4fb;"
+                                     "   border: 2px solid #5aa9d6;"
+                                     "   border-radius: 8px;"
+                                     "   padding: 4px 10px;"
+                                     "   font-size: 13px;"
+                                     "   font-weight: bold;"
+                                     "}"
+                                     "QPushButton:hover {"
+                                     "   background-color: #3f7094;"
+                                     "}"
+                                     "QPushButton:pressed {"
+                                     "   background-color: #16232f;"
+                                     "}");
     });
 
 
@@ -369,6 +466,21 @@ void WordPage::widgetsLoad()
     showButton->setStyleSheet(primaryButtonStyle);
     knowButton->setStyleSheet(primaryButtonStyle);
     saveButton->setStyleSheet(primaryButtonStyle);
+    deleteButton->setStyleSheet("QPushButton {"
+                                "   background-color: #632727;"
+                                "   color: #fbeaea;"
+                                "   border: 2px solid #d65a5a;"
+                                "   border-radius: 8px;"
+                                "   padding: 4px 10px;"
+                                "   font-size: 13px;"
+                                "   font-weight: bold;"
+                                "}"
+                                "QPushButton:hover {"
+                                "   background-color: #943f3f;"
+                                "}"
+                                "QPushButton:pressed {"
+                                "   background-color: #2f1616;"
+                                "}");
 
     QString secondaryButtonStyle =
         "QPushButton {"
@@ -601,8 +713,9 @@ void WordPage::layoutLoad()
     areasLayout->addStretch(1);
 
     buttonsRow1->addStretch(1);
+    buttonsRow1->addWidget(deleteButton);
     buttonsRow1->addWidget(editButton);
-    buttonsRow1->addStretch(3);
+    buttonsRow1->addStretch(4);
     buttonsRow1->addWidget(showButton);
     buttonsRow1->addStretch(1);
 
