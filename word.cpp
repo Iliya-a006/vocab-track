@@ -91,7 +91,7 @@ void Word::saveFile()
 void Word::setCorrects(int c)
 {
     if (c < 1){c = 1;}
-    if (c > 6){c = 6;}
+    if (c > 6){nextReviewDate = QDate(9999, 12, 31);}
     correctReviews = c;
 
     switch (c) {
@@ -129,5 +129,6 @@ void Word::resetDailyReviewStatusIfNeeded()
             w->setReviewed({false, false});
         }
         settings.setValue("lastActiveDate", today);
+        saveFile();
     }
 }

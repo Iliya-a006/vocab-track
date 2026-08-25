@@ -16,8 +16,6 @@ MainWindow::MainWindow(QWidget *parent)
     m_stack = new QStackedWidget(this);
     setCentralWidget(m_stack);
 
-    Word::loadWords();
-
     loadPages();
     changeStack(pageEnum::MAINMENU);
 }

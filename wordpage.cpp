@@ -181,6 +181,7 @@ void WordPage::widgetsLoad()
         }
 
         theWord->setReviewed({true, true});
+        theWord->setCorrects(theWord->getCorrects()+1);
         Word::saveFile();
         index++;
         if (index == Words.size()){
@@ -202,6 +203,7 @@ void WordPage::widgetsLoad()
         }
 
         theWord->setReviewed({true, false});
+        theWord->setCorrects(0);
         Word::saveFile();
         index++;
         if (index == Words.size()){
