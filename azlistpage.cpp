@@ -99,7 +99,6 @@ void AZListPage::refreshList()
         delete listWidget;
         listWidget = nullptr;
     }
-    //Words.clear();
 
     listLayout = new QVBoxLayout;
     listWidget = new QWidget;

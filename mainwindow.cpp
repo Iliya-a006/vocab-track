@@ -52,7 +52,7 @@ void MainWindow::loadPages()
     today_page = std::make_unique<TodayPage>();
     add_page = std::make_unique<AddPage>();
     az_list = std::make_unique<AZListPage>();
-    dlist_page = std::make_unique<DListPage>();
+    dlist_page = std::make_unique<DifficultyListPage>();
     search_page = std::make_unique<SearchPage>();
     word_page = std::make_unique<WordPage>();
 
