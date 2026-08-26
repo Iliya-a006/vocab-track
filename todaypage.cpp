@@ -8,6 +8,7 @@ TodayPage::TodayPage(QWidget *parent)
 {
     this->background = ":/prefix1/images/Bg1";
     setupUI();
+    setupWarningLabel();
 }
 
 void TodayPage::refresh()
@@ -29,6 +30,7 @@ void TodayPage::setupUI()
     });
     connect(startButton, &QPushButton::clicked, this, [this](){
         if (!remainingWords.size()){
+            showWarning("No words left to review today!", 4000);
             return;
         }
         MainWindow::changeStack(pageEnum::WORDPAGE);

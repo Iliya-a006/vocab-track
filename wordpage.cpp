@@ -9,6 +9,7 @@ WordPage::WordPage(QWidget *parent)
 
     widgetsLoad();
     layoutLoad();
+    setupWarningLabel();
 }
 
 int WordPage::index = 0;
@@ -230,15 +231,27 @@ void WordPage::widgetsLoad()
     });
     connect(saveButton, &QPushButton::clicked, this, [this](){
         if (!termEdit->text().length()){
+            showWarning("Term Field Cannot Be Empty!", 3000);
             return;
         }
-        auto it = Word::allWords.find(termEdit->text());
-        if (it == Word::allWords.end()){
+
+        QString newTerm = termEdit->text();
+        QString oldTerm = theWord->getTerm();
+        auto it = Word::allWords.find(newTerm);
+        if (it != Word::allWords.end() && it->second.get() != theWord){
+            showWarning("A Word With This Term Already Exists!", 3000);
             return;
         }
-        theWord->setTerm(termEdit->text());
+
+        theWord->setTerm(newTerm);
         theWord->setPOS(POSEdit->currentText());
         theWord->setExample(exampleEdit->text());
+
+        if (newTerm != oldTerm){
+            auto node = Word::allWords.extract(oldTerm);
+            node.key() = newTerm;
+            Word::allWords.insert(std::move(node));
+        }
 
         Word::saveFile();
         changeToShow();
@@ -259,6 +272,18 @@ void WordPage::widgetsLoad()
         else{
             theWord->addSynonym(synonymEdit->text());
             Word::saveFile();
+
+            for (auto& [key, w] : Word::allWords)
+                if (key == synonymEdit->text()){
+                    for (auto s : w->getSynonyms())
+                        if (s == termEdit->text()){
+                            synonymEdit->setText("");
+                            return;
+                        }
+                    w->addSynonym(termEdit->text());
+                    synonymEdit->setText("");
+                    return;
+                }
             synonymEdit->setText("");
         }
     });

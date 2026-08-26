@@ -141,6 +141,8 @@ SearchPage::SearchPage(QWidget *parent)
                               "QPushButton:pressed {"
                               "   background-color: #16232f;"
                               "}");
+
+    setupWarningLabel();
 }
 
 void SearchPage::refresh()
@@ -171,6 +173,12 @@ void SearchPage::refreshResults()
         {
             words.push_back(w.get());
         }
+    }
+
+    if (!words.size()){
+        showWarning("No matching word found!", 3000);
+        scrollArea->setFixedHeight(0);
+        return;
     }
 
     int heigth = words.size() * 60;

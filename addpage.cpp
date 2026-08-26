@@ -2,6 +2,7 @@
 #include "mainwindow.h"
 #include "word.h"
 #include <map>
+#include <QTimer>
 
 AddPage::AddPage(QWidget *parent)
     : Page(parent)
@@ -17,6 +18,18 @@ AddPage::AddPage(QWidget *parent)
     connect(synonymSave, &QPushButton::clicked, this, [this](){
         if (!synonymEdit->text().length()){return;}
         synonyms.push_back(synonymEdit->text());
+
+        for (auto& [key, w] : Word::allWords)
+            if (key == synonymEdit->text()){
+                for (auto s : w->getSynonyms())
+                    if (s == termEdit->text()){
+                        synonymEdit->setText("");
+                        return;
+                    }
+                w->addSynonym(termEdit->text());
+                synonymEdit->setText("");
+                return;
+            }
         synonymEdit->setText("");
     });
     connect(translationSave, &QPushButton::clicked, this, [this](){
@@ -27,10 +40,16 @@ AddPage::AddPage(QWidget *parent)
     connect(saveButton, &QPushButton::clicked, this, [this](){
         if (!termEdit->text().length()){return;}
         auto it = Word::allWords.find(termEdit->text());
-        if (it == Word::allWords.end())
+        if (it == Word::allWords.end()){
             saveWord();
-        this->refresh();
+            this->refresh();
+        }
+        else{
+            showWarning("This Word Exists Before!", 3000);
+        }
     });
+
+    setupWarningLabel();
 }
 
 void AddPage::refresh()

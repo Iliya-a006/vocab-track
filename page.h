@@ -2,6 +2,7 @@
 #define PAGE_H
 
 #include <QWidget>
+#include <qlabel.h>
 
 class Page : public QWidget
 {
@@ -15,6 +16,10 @@ public:
 protected:
     QString background;
     int stackIndex;
+    QLabel* warningLabel;
+
+    void setupWarningLabel();
+    void showWarning(QString text, int time);
 
 public:
     virtual void refresh() = 0;
