@@ -250,27 +250,115 @@ void WordPage::widgetsLoad()
         if (!synonymEdit->text().length()){
             return;
         }
-        for (auto syn : theWord->getSynonyms())
-            if (syn == synonymEdit->text()){
-                synonymEdit->setText("");
-                return;
-            }
-        theWord->addSynonym(synonymEdit->text());
-        Word::saveFile();
-        synonymEdit->setText("");
+        if (synDelete){
+            synDelete = false;
+            theWord->deleteSynonym(synonymEdit->text());
+            Word::saveFile();
+            synonymEdit->setText("");
+        }
+        else{
+            theWord->addSynonym(synonymEdit->text());
+            Word::saveFile();
+            synonymEdit->setText("");
+        }
     });
     connect(translationButton, &QPushButton::clicked, this, [this](){
         if (!translationEdit->text().length()){
             return;
         }
-        for (auto tra : theWord->getTranslations())
-            if(tra == translationEdit->text()){
-                translationEdit->setText("");
+        if (tranDelete){
+            tranDelete = false;
+            theWord->deleteTranslation(translationEdit->text());
+            Word::saveFile();
+            translationEdit->setText("");
+        }
+        else{
+            theWord->addTranslation(translationEdit->text());
+            Word::saveFile();
+            translationEdit->setText("");
+        }
+    });
+    connect(synonymEdit, &QLineEdit::textChanged, this, [this](const QString &text) {
+        for (auto s : theWord->getSynonyms()){
+            if (synonymEdit->text() == s){
+                synDelete = true;
+                synonymButton->setText("Delete");
+                synonymButton->setStyleSheet("QPushButton {"
+                                             "   background-color: #632727;"
+                                             "   color: #fbeaea;"
+                                             "   border: 2px solid #d65a5a;"
+                                             "   border-radius: 8px;"
+                                             "   padding: 4px 10px;"
+                                             "   font-size: 13px;"
+                                             "   font-weight: bold;"
+                                             "}"
+                                             "QPushButton:hover {"
+                                             "   background-color: #943f3f;"
+                                             "}"
+                                             "QPushButton:pressed {"
+                                             "   background-color: #2f1616;"
+                                             "}");
                 return;
             }
-        theWord->addTranslation(translationEdit->text());
-        Word::saveFile();
-        translationEdit->setText("");
+        }
+        synDelete = false;
+        synonymButton->setText("Save");
+        synonymButton->setStyleSheet("QPushButton {"
+                                     "   background-color: #274a63;"
+                                     "   color: #eaf4fb;"
+                                     "   border: 2px solid #5aa9d6;"
+                                     "   border-radius: 8px;"
+                                     "   padding: 4px 10px;"
+                                     "   font-size: 13px;"
+                                     "   font-weight: bold;"
+                                     "}"
+                                     "QPushButton:hover {"
+                                     "   background-color: #3f7094;"
+                                     "}"
+                                     "QPushButton:pressed {"
+                                     "   background-color: #16232f;"
+                                     "}");
+    });
+    connect(translationEdit, &QLineEdit::textChanged, this, [this](const QString &text) {
+        for (auto s : theWord->getTranslations()){
+            if (translationEdit->text() == s){
+                tranDelete = true;
+                translationButton->setText("Delete");
+                translationButton->setStyleSheet("QPushButton {"
+                                             "   background-color: #632727;"
+                                             "   color: #fbeaea;"
+                                             "   border: 2px solid #d65a5a;"
+                                             "   border-radius: 8px;"
+                                             "   padding: 4px 10px;"
+                                             "   font-size: 13px;"
+                                             "   font-weight: bold;"
+                                             "}"
+                                             "QPushButton:hover {"
+                                             "   background-color: #943f3f;"
+                                             "}"
+                                             "QPushButton:pressed {"
+                                             "   background-color: #2f1616;"
+                                             "}");
+                return;
+            }
+        }
+        tranDelete = false;
+        translationButton->setText("Save");
+        translationButton->setStyleSheet("QPushButton {"
+                                     "   background-color: #274a63;"
+                                     "   color: #eaf4fb;"
+                                     "   border: 2px solid #5aa9d6;"
+                                     "   border-radius: 8px;"
+                                     "   padding: 4px 10px;"
+                                     "   font-size: 13px;"
+                                     "   font-weight: bold;"
+                                     "}"
+                                     "QPushButton:hover {"
+                                     "   background-color: #3f7094;"
+                                     "}"
+                                     "QPushButton:pressed {"
+                                     "   background-color: #16232f;"
+                                     "}");
     });
 
 

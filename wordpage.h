@@ -35,6 +35,8 @@ private:
     Word* theWord;
     QVector<Word*> Words;
     int showCounter;
+    bool synDelete = false;
+    bool tranDelete = false;
 
     QLabel* termLabel;
     QLabel* POSLabel;
