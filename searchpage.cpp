@@ -147,10 +147,12 @@ void SearchPage::refresh()
     scrollArea->move(searchEdit->x(), searchEdit->y() + searchEdit->height() + 10);
     maxListHeigth = backButton->y() - searchEdit->y() - 80;
 
-    clearResults();
-    words.clear();
-    searchEdit->setText("");
-    scrollArea->setFixedHeight(0);
+    if (MainWindow::prevPage != pageEnum::WORDPAGE){
+        clearResults();
+        words.clear();
+        searchEdit->setText("");
+        scrollArea->setFixedHeight(0);
+    }
 }
 
 void SearchPage::refreshResults()
