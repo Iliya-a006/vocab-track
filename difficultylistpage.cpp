@@ -113,10 +113,6 @@ void DifficultyListPage::refreshList()
     listWidget->setStyleSheet("background-color: transparent;");
     listLayout->setSpacing(20);
 
-    // Word::allWords is a map ordered alphabetically (CaseInsensitiveLess),
-    // so it can't be walked in difficulty order directly.
-    // We take a flat snapshot of raw Word* (non-owning, map still owns them)
-    // and sort that snapshot by correctReviews ascending -> hardest words first.
     sortedWords.clear();
     sortedWords.reserve(Word::allWords.size());
     for (const auto& [key, val] : Word::allWords){
@@ -135,9 +131,6 @@ void DifficultyListPage::refreshList()
 
 void DifficultyListPage::loadList()
 {
-    // a previous call to loadList() (either from refreshList() or from a
-    // scroll-triggered load) always ends with listLayout->addStretch(1).
-    // remove that leftover spacer here so it doesn't pile up on every call.
     if (listLayout->count() > 0){
         QLayoutItem* lastItem = listLayout->itemAt(listLayout->count() - 1);
         if (lastItem && lastItem->spacerItem()){
@@ -200,8 +193,6 @@ void DifficultyListPage::loadList()
         buttonsLayout->addStretch(1);
         listLayout->addLayout(buttonsLayout);
     } else {
-        // last row was already flushed (or nothing was added this call) ->
-        // this freshly created layout is unused, delete it to avoid a leak
         delete buttonsLayout;
     }
 

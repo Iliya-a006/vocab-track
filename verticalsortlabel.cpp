@@ -30,7 +30,6 @@ void VerticalSortLabel::paintEvent(QPaintEvent*)
     QPainter painter(this);
     painter.setRenderHint(QPainter::Antialiasing);
 
-    // --- background card, matching the scrollArea's styling ---
     QRectF bgRect(1, 1, width() - 2, height() - 2);
     painter.setPen(QPen(borderColor, 2));
     painter.setBrush(backgroundColor);
@@ -42,7 +41,6 @@ void VerticalSortLabel::paintEvent(QPaintEvent*)
     const int gapBeforeArrow = 14;
     const int cx = width() / 2;
 
-    // --- downward arrow, pinned near the bottom of the widget ---
     const int lineBottom = height() - bottomPadding;
     const int lineTop = lineBottom - arrowAreaHeight;
 
@@ -57,7 +55,6 @@ void VerticalSortLabel::paintEvent(QPaintEvent*)
     painter.setBrush(arrowColor);
     painter.drawPolygon(arrowHead);
 
-    // --- rotated text, filling the space above the arrow ---
     QFont f = painter.font();
     f.setBold(true);
     f.setPointSize(10);
