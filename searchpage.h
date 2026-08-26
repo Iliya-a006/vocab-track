@@ -35,6 +35,7 @@ private:
     int maxListHeigth;
 
     void refreshResults();
+    void clearResults();
 
 };
 
