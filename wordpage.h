@@ -48,6 +48,7 @@ private:
     QScrollArea* translationsArea;
 
     QPushButton* showButton;
+    QPushButton* deleteButton;
     QPushButton* editButton;
     QPushButton* exitButton;
     QPushButton* knowButton;

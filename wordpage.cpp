@@ -42,6 +42,7 @@ void WordPage::changeToShow()
     editLabel->hide();
     showButton->show();
     editButton->show();
+    deleteButton->show();
     POSLabel->hide();
     exampleLabel2->hide();
     synonymsArea->hide();
@@ -64,6 +65,7 @@ void WordPage::changeToEdit()
     editLabel->show();
     showButton->hide();
     editButton->hide();
+    deleteButton->hide();
 
     if (theWord){
         termEdit->setText(theWord->getTerm());
@@ -88,6 +90,7 @@ void WordPage::widgetsLoad()
     translationsArea = new QScrollArea(this);
 
     showButton = new QPushButton("Show", this);
+    deleteButton = new QPushButton("Delete", this);
     editButton = new QPushButton("Edit", this);
     exitButton = new QPushButton("Exit", this);
     knowButton = new QPushButton("Know It", this);
@@ -121,6 +124,7 @@ void WordPage::widgetsLoad()
     translationsArea->setFixedSize(320, 100);
 
     showButton->setFixedSize(120, 40);
+    deleteButton->setFixedSize(120, 40);
     editButton->setFixedSize(120, 40);
     exitButton->setFixedSize(120, 40);
     knowButton->setFixedSize(150, 40);
@@ -152,6 +156,11 @@ void WordPage::widgetsLoad()
     });
     connect(editButton, &QPushButton::clicked, this, [this](){
         changeToEdit();
+    });
+    connect(deleteButton, &QPushButton::clicked, this, [this](){
+        Word::allWords.erase(theWord->getTerm());
+        Word::saveFile();
+        MainWindow::changeStack(MainWindow::prevPage);
     });
     connect(showButton, &QPushButton::clicked, this, [this](){
         switch (showCounter) {
@@ -369,6 +378,21 @@ void WordPage::widgetsLoad()
     showButton->setStyleSheet(primaryButtonStyle);
     knowButton->setStyleSheet(primaryButtonStyle);
     saveButton->setStyleSheet(primaryButtonStyle);
+    deleteButton->setStyleSheet("QPushButton {"
+                                "   background-color: #632727;"
+                                "   color: #fbeaea;"
+                                "   border: 2px solid #d65a5a;"
+                                "   border-radius: 8px;"
+                                "   padding: 4px 10px;"
+                                "   font-size: 13px;"
+                                "   font-weight: bold;"
+                                "}"
+                                "QPushButton:hover {"
+                                "   background-color: #943f3f;"
+                                "}"
+                                "QPushButton:pressed {"
+                                "   background-color: #2f1616;"
+                                "}");
 
     QString secondaryButtonStyle =
         "QPushButton {"
@@ -601,8 +625,9 @@ void WordPage::layoutLoad()
     areasLayout->addStretch(1);
 
     buttonsRow1->addStretch(1);
+    buttonsRow1->addWidget(deleteButton);
     buttonsRow1->addWidget(editButton);
-    buttonsRow1->addStretch(3);
+    buttonsRow1->addStretch(4);
     buttonsRow1->addWidget(showButton);
     buttonsRow1->addStretch(1);
 
