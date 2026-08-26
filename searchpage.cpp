@@ -18,13 +18,15 @@ SearchPage::SearchPage(QWidget *parent)
     listLayout = new QVBoxLayout();
     listWidget->setLayout(listLayout);
     scrollArea->setWidget(listWidget);
+    scrollArea->setWidgetResizable(true);
+    listWidget->setAutoFillBackground(false);
+    listWidget->setStyleSheet("background-color: transparent;");
 
     topLabel->setFixedSize(240, 50);
     searchEdit->setFixedSize(ScreenSize::getWidth()*3/4, 40);
     searchButton->setFixedSize(120, 40);
     backButton->setFixedSize(80, 40);
     scrollArea->setFixedWidth(searchEdit->width() + searchButton->width());
-    maxListHeigth = backButton->y() - searchEdit->y() - 150;
     scrollArea->setFixedHeight(0);
 
     QHBoxLayout* topLayout = new QHBoxLayout;
@@ -50,6 +52,14 @@ SearchPage::SearchPage(QWidget *parent)
     outterLayout->addStretch(12);
     outterLayout->addLayout(backBLayout);
     outterLayout->addStretch(2);
+
+
+    connect(searchButton, &QPushButton::clicked, this, [this](){
+        refreshResults();
+    });
+    connect(backButton, &QPushButton::clicked, this, [](){
+        MainWindow::changeStack(pageEnum::MAINMENU);
+    });
 
 
     topLabel->setStyleSheet(
@@ -135,14 +145,18 @@ SearchPage::SearchPage(QWidget *parent)
 void SearchPage::refresh()
 {
     scrollArea->move(searchEdit->x(), searchEdit->y() + searchEdit->height() + 10);
+    maxListHeigth = backButton->y() - searchEdit->y() - 80;
+
+    clearResults();
+    words.clear();
+    searchEdit->setText("");
+    scrollArea->setFixedHeight(0);
 }
 
 void SearchPage::refreshResults()
 {
-    if (words.size()){
-        clearResults();
-        words.clear();
-    }
+    clearResults();
+    words.clear();
 
     if (!searchEdit->text().length()){
         return;
@@ -156,7 +170,7 @@ void SearchPage::refreshResults()
         }
     }
 
-    int heigth = words.size() * 46;
+    int heigth = words.size() * 60;
     if (heigth > maxListHeigth){
         scrollArea->setFixedHeight(maxListHeigth);
     } else {
