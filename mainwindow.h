@@ -7,7 +7,7 @@
 #include "todaypage.h"
 #include "addpage.h"
 #include "azlistpage.h"
-#include "dlistpage.h"
+#include "difficultylistpage.h"
 #include "searchpage.h"
 #include "wordpage.h"
 
@@ -50,7 +50,7 @@ private:
     std::unique_ptr<TodayPage> today_page;
     std::unique_ptr<AddPage> add_page;
     std::unique_ptr<AZListPage> az_list;
-    std::unique_ptr<DListPage> dlist_page;
+    std::unique_ptr<DifficultyListPage> dlist_page;
     std::unique_ptr<SearchPage> search_page;
     std::unique_ptr<WordPage> word_page;
 };

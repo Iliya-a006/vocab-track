@@ -1,24 +1,18 @@
 cmake_minimum_required(VERSION 3.16)
-
 project(Vocabulary_app VERSION 0.1 LANGUAGES CXX)
-
 set(CMAKE_AUTOUIC ON)
 set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTORCC ON)
-
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
-
 find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS Widgets)
 find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Widgets)
-
 set(PROJECT_SOURCES
         main.cpp
         mainwindow.cpp
         mainwindow.h
         mainwindow.ui
 )
-
 if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
     qt_add_executable(Vocabulary_app
         MANUAL_FINALIZATION
@@ -30,7 +24,8 @@ if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
         todaypage.h todaypage.cpp
         addpage.h addpage.cpp
         azlistpage.h azlistpage.cpp
-        dlistpage.h dlistpage.cpp
+        difficultylistpage.h difficultylistpage.cpp
+        verticalsortlabel.h verticalsortlabel.cpp
         searchpage.h searchpage.cpp
         wordpage.h wordpage.cpp
         screensize.h screensize.cpp
@@ -52,9 +47,7 @@ else()
         )
     endif()
 endif()
-
 target_link_libraries(Vocabulary_app PRIVATE Qt${QT_VERSION_MAJOR}::Widgets)
-
 # Qt for iOS sets MACOSX_BUNDLE_GUI_IDENTIFIER automatically since Qt 6.1.
 # If you are developing for iOS or macOS you should consider setting an
 # explicit, fixed bundle identifier manually though.
@@ -68,14 +61,12 @@ set_target_properties(Vocabulary_app PROPERTIES
     MACOSX_BUNDLE TRUE
     WIN32_EXECUTABLE TRUE
 )
-
 include(GNUInstallDirs)
 install(TARGETS Vocabulary_app
     BUNDLE DESTINATION .
     LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
     RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
 )
-
 if(QT_VERSION_MAJOR EQUAL 6)
     qt_finalize_executable(Vocabulary_app)
 endif()
