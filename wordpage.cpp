@@ -259,6 +259,18 @@ void WordPage::widgetsLoad()
         else{
             theWord->addSynonym(synonymEdit->text());
             Word::saveFile();
+
+            for (auto& [key, w] : Word::allWords)
+                if (key == synonymEdit->text()){
+                    for (auto s : w->getSynonyms())
+                        if (s == termEdit->text()){
+                            synonymEdit->setText("");
+                            return;
+                        }
+                    w->addSynonym(termEdit->text());
+                    synonymEdit->setText("");
+                    return;
+                }
             synonymEdit->setText("");
         }
     });

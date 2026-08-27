@@ -17,6 +17,18 @@ AddPage::AddPage(QWidget *parent)
     connect(synonymSave, &QPushButton::clicked, this, [this](){
         if (!synonymEdit->text().length()){return;}
         synonyms.push_back(synonymEdit->text());
+
+        for (auto& [key, w] : Word::allWords)
+            if (key == synonymEdit->text()){
+                for (auto s : w->getSynonyms())
+                    if (s == termEdit->text()){
+                        synonymEdit->setText("");
+                        return;
+                    }
+                w->addSynonym(termEdit->text());
+                synonymEdit->setText("");
+                return;
+            }
         synonymEdit->setText("");
     });
     connect(translationSave, &QPushButton::clicked, this, [this](){
