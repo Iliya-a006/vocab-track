@@ -2,6 +2,7 @@
 #include "mainwindow.h"
 #include "word.h"
 #include <map>
+#include <QTimer>
 
 AddPage::AddPage(QWidget *parent)
     : Page(parent)
@@ -39,10 +40,16 @@ AddPage::AddPage(QWidget *parent)
     connect(saveButton, &QPushButton::clicked, this, [this](){
         if (!termEdit->text().length()){return;}
         auto it = Word::allWords.find(termEdit->text());
-        if (it == Word::allWords.end())
+        if (it == Word::allWords.end()){
             saveWord();
-        this->refresh();
+            this->refresh();
+        }
+        else{
+            showWarning("This Word Exists Before!", 3000);
+        }
     });
+
+    setupWarningLabel();
 }
 
 void AddPage::refresh()
