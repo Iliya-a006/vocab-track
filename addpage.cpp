@@ -38,15 +38,17 @@ AddPage::AddPage(QWidget *parent)
         translationEdit->setText("");
     });
     connect(saveButton, &QPushButton::clicked, this, [this](){
-        if (!termEdit->text().length()){return;}
+        if (!termEdit->text().length()){
+            showWarning("Term field cannot be empty!", 3000);
+            return;
+        }
         auto it = Word::allWords.find(termEdit->text());
-        if (it == Word::allWords.end()){
-            saveWord();
-            this->refresh();
+        if (it != Word::allWords.end()){
+            showWarning("A Word With This Term Already Exists!", 3000);
+            return;
         }
-        else{
-            showWarning("This Word Exists Before!", 3000);
-        }
+        saveWord();
+        this->refresh();
     });
 
     setupWarningLabel();
