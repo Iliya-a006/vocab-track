@@ -71,6 +71,7 @@ void WordPage::changeToEdit()
 
     if (theWord){
         termEdit->setText(theWord->getTerm());
+        POSEdit->setCurrentIndex(-1);
         POSEdit->setCurrentText(theWord->getPOS());
         exampleEdit->setText(theWord->getExample());
         synonymEdit->setText("");
