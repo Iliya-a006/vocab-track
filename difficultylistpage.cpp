@@ -144,7 +144,7 @@ void DifficultyListPage::loadList()
     QHBoxLayout* buttonsLayout = new QHBoxLayout;
     buttonsLayout->setSpacing(8);
 
-    while (count < 30 && loadIndex < sortedWords.size()){
+    while (count < 100 && loadIndex < sortedWords.size()){
         QString term = sortedWords[loadIndex]->getTerm();
 
         QPushButton* wordButton = new QPushButton(term);

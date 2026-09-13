@@ -1,4 +1,5 @@
 #include "wordpage.h"
+#include "dialogwindow.h"
 #include "mainwindow.h"
 #include "todaypage.h"
 
@@ -159,9 +160,13 @@ void WordPage::widgetsLoad()
         changeToEdit();
     });
     connect(deleteButton, &QPushButton::clicked, this, [this](){
-        Word::allWords.erase(theWord->getTerm());
-        Word::saveFile();
-        MainWindow::changeStack(MainWindow::prevPage);
+        DialogWindow deleteWindow("This word will be permanently deleted!", this);
+
+        if (deleteWindow.exec() == QDialog::Accepted) {
+            Word::allWords.erase(theWord->getTerm());
+            Word::saveFile();
+            MainWindow::changeStack(MainWindow::prevPage);
+        }
     });
     connect(showButton, &QPushButton::clicked, this, [this](){
         switch (showCounter) {
