@@ -39,7 +39,7 @@ AddPage::AddPage(QWidget *parent)
     });
     connect(saveButton, &QPushButton::clicked, this, [this](){
         if (!termEdit->text().length()){
-            showWarning("Term field cannot be empty!", 3000);
+            showWarning("Term Field Cannot Be Empty!", 3000);
             return;
         }
         auto it = Word::allWords.find(termEdit->text());
@@ -47,6 +47,9 @@ AddPage::AddPage(QWidget *parent)
             showWarning("A Word With This Term Already Exists!", 3000);
             return;
         }
+
+        synonymSave->click();
+        translationSave->click();
         saveWord();
         this->refresh();
     });
