@@ -115,7 +115,7 @@ void AZListPage::refreshList()
 void AZListPage::loadList()
 {
     int count = 0;
-    while(count < 30 && it != Word::allWords.end()){
+    while(count < 100 && it != Word::allWords.end()){
         int rowCount = 0;
 
         QString letter = it->second->getTerm()[0].toUpper();
