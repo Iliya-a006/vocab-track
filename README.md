@@ -19,15 +19,15 @@ Records new words with their meaning, part of speech, synonyms, and an example s
 
 ## Screenshots
 
-| A–Z List | Today's Review | Search |
+<img src="screenshots/today.png" width="500" alt="Today's Review" />
+
+| A–Z List | Search | Difficulty List |
 |---|---|---|
-| ![AZ List](screenshots/az_list.png) | ![Today](screenshots/today.png) | ![Search](screenshots/search.png) |
+| <img src="screenshots/az_list.png" width="220" /> | <img src="screenshots/search.png" width="220" /> | <img src="screenshots/difficulty_list.png" width="220" /> |
 
 | Word (View) | Word (Edit) | Add Word |
 |---|---|---|
-| ![Word view](screenshots/word_view.png) | ![Word edit](screenshots/word_edit.png) | ![Add word](screenshots/add.png) |
-
-![Difficulty list](screenshots/difficulty_list.png)
+| <img src="screenshots/word_view.png" width="220" /> | <img src="screenshots/word_edit.png" width="220" /> | <img src="screenshots/add.png" width="220" /> |
 
 ## Built With
 
