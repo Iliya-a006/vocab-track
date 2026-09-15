@@ -5,13 +5,16 @@
 #include <QStackedWidget>
 #include <QPainter>
 #include "page.h"
+#include <QIcon>
 
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
     , ui(new Ui::MainWindow)
 {
+    setWindowIcon(QIcon(":/prefix1/icons/icon.png"));
     ui->setupUi(this);
+    setWindowTitle("VocabTrack");
 
     m_stack = new QStackedWidget(this);
     setCentralWidget(m_stack);

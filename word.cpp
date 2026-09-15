@@ -6,6 +6,8 @@
 #include <QJsonValue>
 #include <memory>
 #include <QSettings>
+#include <QStandardPaths>
+#include <QDir>
 
 Word::Word(QString t) : term(t)
 {
@@ -23,10 +25,17 @@ void Word::deleteTranslation(QString t)
     translations.erase(std::remove(translations.begin(), translations.end(), t));
 }
 
+QString Word::dataFilePath()
+{
+    QString dir = QStandardPaths::writableLocation(QStandardPaths::AppDataLocation);
+    QDir().mkpath(dir);
+    return dir + "/words.json";
+}
+
 std::map<QString, std::unique_ptr<Word>, CaseInsensitiveLess> Word::allWords;
 void Word::loadWords()
 {
-    QFile file("words.json");
+    QFile file(dataFilePath());
     if (!file.open(QIODevice::ReadOnly))
         return;
     QByteArray data = file.readAll();
@@ -89,7 +98,7 @@ void Word::saveFile()
     root["words"] = wordsArray;
     QJsonDocument doc(root);
 
-    QFile file("words.json");
+    QFile file(dataFilePath());
     if (!file.open(QIODevice::WriteOnly))
         return;
     file.write(doc.toJson());

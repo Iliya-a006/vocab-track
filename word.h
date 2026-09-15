@@ -22,6 +22,8 @@ public:
     static void resetDailyReviewStatusIfNeeded();
 
 private:
+    static QString dataFilePath();
+
     QString term;
     QString partOfSpeech;
     QString example;
