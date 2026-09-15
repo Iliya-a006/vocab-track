@@ -2,8 +2,6 @@
 
 A small desktop app I built to help myself remember new English words, using spaced repetition. Built with Qt6 and C++ as a personal project to get more comfortable with modern C++ practices.
 
-![VocabTrack demo](screenshots/demo.gif)
-
 ## About this project
 
 Records new words with their meaning, part of speech, synonyms, and an example sentence, then schedules reviews using spaced repetition (1 → 2 → 4 → 7 → 16 → 60 days). A personal Qt/C++ learning project.
