@@ -36,6 +36,10 @@ Records new words with their meaning, part of speech, synonyms, and an example s
 - **CMake**
 - **Qt JSON classes** for data persistence
 
+## Installing
+
+A ready-to-run Windows installer is available on the [Releases](https://github.com/Iliya-a006/vocab-track/releases) page.
+
 ## Building from source
 
 ```bash
